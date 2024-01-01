@@ -1,0 +1,25 @@
+<div class="container">
+  <div class="card shadow" style="width: 100%">
+    <div class="card-header text-center fs-4">
+      Video en reproducción
+    </div>
+    <div class="ratio ratio-16x9 ratio-pc">
+      <iframe src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0" title="YouTube video" allowfullscreen></iframe>
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">Actual</h5>
+      <p class="card-text">(nombre) <b>Artista - cancion</b></p>
+    </div>
+    <p class="text-center fw-bold">Siguientes</p>
+
+    <div class="list-item-container">
+      <ul cdkDropList class="list-group list-group-flush d-flex" (cdkDropListDropped)="drop($event)">
+        <li cdkDrag class="list-group-item item-drag" *ngFor="let item of items">
+          <div class="example-custom-placeholder" *cdkDragPlaceholder></div>
+          {{ item }}
+          <button class="btn btn-danger" (click)="deleteElement(item)">X</button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
