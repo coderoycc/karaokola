@@ -1,14 +1,12 @@
-<div id="video-container">
-  <video id="myVideo">
-    <source src="/assets/video.mp4" type="video/mp4">
+<div id="video-container" >
+  <video id="myVideo"  [src]="'/assets'+estadoVideoActual.ruta" *ngIf="estadoVideoActual.ruta != ''" autoplay playsinline="">
     Tu navegador no soporta el elemento de video.
   </video>
+  <img src="/assets/karaoke.jpg" alt="" style="width: 100%;height: 100%;" *ngIf="estadoVideoActual.ruta == ''">
 
   <div id="overlay-container">
     <ul>
-      <li>(nombre) artista - cancion</li>
-      <li>(Ramirin) juan gabriel - x por ciento</li>
-      <li>(Fermin L.) Juaco - De nuvo a la vida</li>
+      <li *ngFor="let video of colaVideos.slice(0,3)">({{video.usuario}}) - {{ video.descripcion }}</li>
     </ul>
   </div>
 </div>

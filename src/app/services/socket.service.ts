@@ -15,6 +15,13 @@ export class SocketService {
     this.socket.emit('getkaraokola','');
   }
 
+  playVideo(){
+    this.socket.emit('playVideo','');
+  }
+  pauseVideo(){
+    this.socket.emit('pauseVideo','');
+  }
+
   delete(message: string){
     this.socket.emit('deletekaraokola', message);
   }
@@ -33,4 +40,41 @@ export class SocketService {
     return observable;
   }
 
+  currentVideo(){
+    let observable = new Observable<string>(observer => {
+      this.socket.on('currentVideo', (data) => {
+        observer.next(data);
+      });
+      return () => { this.socket.disconnect(); };  
+    });
+    return observable;
+  }
+
+  playCurrentVideo(){
+    let observable = new Observable<string>(observer => {
+      this.socket.on('playVideo', (data) => {
+        observer.next(data);
+      });
+      return () => { this.socket.disconnect(); };  
+    });
+    return observable;
+  }
+  reloadVideo(){
+    let observable = new Observable<string>(observer => {
+      this.socket.on('reloadVideo', (data) => {
+        observer.next(data);
+      });
+      return () => { this.socket.disconnect(); };  
+    });
+    return observable;
+  }
+  nextVideo(){
+    let observable = new Observable<string>(observer => {
+      this.socket.on('nextVideo', (data) => {
+        observer.next(data);
+      });
+      return () => { this.socket.disconnect(); };  
+    });
+    return observable;
+  }
 }
