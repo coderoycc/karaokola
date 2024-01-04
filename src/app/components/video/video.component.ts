@@ -76,6 +76,9 @@ export class VideoComponent  {
   }
   reloadVideo(){
     console.log('VIDEO RELOAD RECBIDO')
+    this.myVideo.currentTime = 0;
+
+    // document.getElementById('myVideo').currentTime = 0
   }
   nextVideo(){
     console.log('VIDEO NEXT RECBIDO')
