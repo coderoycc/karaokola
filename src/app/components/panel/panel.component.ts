@@ -13,28 +13,40 @@ import { VideoService } from 'src/app/services/video.service';
 export class PanelComponent {
   estadoVideoActual: VideoState = {
     play: false,
-    descripcion:'() Sin Video Actual',
+    usuario: '()',
+    descripcion:'Sin Video Actual',
     ruta: '',
     volumen: 50
   }
   items: MusicElement[] = [];
   constructor(private socket: SocketService, private videoService: VideoService){
     this.socket.getMusicList();
+    this.socket.cargarActual();
   }
   ngOnInit(){
     this.socket.refreshMusicList().subscribe(data => {
       console.log('evento escuchado -- ')
       this.items = JSON.parse(data);
     });
+    this.socket.initVideo().subscribe(data => {
+      console.log('Cargando el video INICIO')
+      const video = JSON.parse(data)
+      this.estadoVideoActual.play = video.play;
+      this.estadoVideoActual.usuario = video.usuario;
+      this.estadoVideoActual.descripcion = video.descripcion;
+      this.estadoVideoActual.ruta = video.ruta;
+      this.estadoVideoActual.volumen = video.volumen;
+    })
     this.socket.currentVideo().subscribe(data => {
-      if(data.length > 0){
+      console.log('Video ActualXDXD', data)
+      if(data.length > 0){ 
         const video = JSON.parse(data);
         this.estadoVideoActual.play = video.play;
         this.estadoVideoActual.descripcion = video.descripcion;
         this.estadoVideoActual.ruta = video.ruta;
         this.estadoVideoActual.volumen = 50;
-      }else{
-        alert('No hay videos en cola')
+      }else{ // respuesta cadena vacia
+        alert()
       }
     })
   }
@@ -53,17 +65,18 @@ export class PanelComponent {
   }
 
   playVideo(){
+    console.log('antes', this.estadoVideoActual.play);
     this.socket.playVideo();
-  }
-  pauseVideo(){
-    this.socket.pauseVideo();
+    this.estadoVideoActual.play = !this.estadoVideoActual.play
+    console.log('despues', this.estadoVideoActual.play);
   }
 
   reloadVideo(){
-    this.videoService.reload();
+    console.log('ReloadVIDEO')
+    this.socket.emitReloadVideo();
   }
   nextVideo(){
-    this.videoService.nextVideo();
+    this.socket.emitNextVideo();
   }
   volumen(){
     const value:number = 19;

@@ -15,9 +15,11 @@ export class VideoComponent  {
       this.playVideo();
     }
   }
+  vhcontainer:number = 88; 
   myVideo: HTMLVideoElement;
   estadoVideoActual: VideoState = {
     play: false,
+    usuario: '',
     descripcion:'',
     ruta: '',
     volumen: 50
@@ -29,6 +31,9 @@ export class VideoComponent  {
   }
 
   ngOnInit() {
+    alert('Necesario para iniciar');
+    // poner pantalla completa
+    // document.body.requestFullscreen();
     this.myVideo = this.elementRef.nativeElement.querySelector('#myVideo');
     this.socket.refreshMusicList().subscribe(data => {
       console.log('Videos LIST')
@@ -44,11 +49,12 @@ export class VideoComponent  {
           this.myVideo = this.elementRef.nativeElement.querySelector('#myVideo');
           console.log(this.myVideo)
           this.playVideo();
-        }, 1000);
+        }, 900);
       }
     });
     this.socket.reloadVideo().subscribe(data => {
-
+      console.log('VIDEO DESDE 0')
+      this.reloadVideo();
     });
     this.socket.nextVideo().subscribe(data => {
 
@@ -62,23 +68,13 @@ export class VideoComponent  {
       this.myVideo.pause();
       this.estadoVideoActual.play = false;
     }else{
-      // this.myVideo.muted = true;
       this.myVideo.play();
       this.estadoVideoActual.play = true;
-
-      // setTimeout(() => {
-      //   // this.myVideo.volume += 100;
-      //   if (this.myVideo.volume < 1.0) {
-      //     this.myVideo.volume += 0.1;
-      //   }
-      // }, 2000);
     }
   }
   reloadVideo(){
     console.log('VIDEO RELOAD RECBIDO')
     this.myVideo.currentTime = 0;
-
-    // document.getElementById('myVideo').currentTime = 0
   }
   nextVideo(){
     console.log('VIDEO NEXT RECBIDO')
@@ -87,4 +83,8 @@ export class VideoComponent  {
     console.log('VIDEO VOLUME RECBIDO')
   }
   
+  // cambiar altura contenedor
+  cambiarAltura(){
+    this.vhcontainer = this.vhcontainer + 1;
+  }
 }
