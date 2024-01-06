@@ -3,8 +3,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MusicElement } from 'src/app/interfaces/interface.musica';
 import { SocketService } from 'src/app/services/socket.service';
 import { VideoState } from 'src/app/interfaces/interface.videostate';
-import { VideoService } from 'src/app/services/video.service';
-
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-panel',
   templateUrl: './panel.component.html',
@@ -19,13 +18,12 @@ export class PanelComponent {
     volumen: 50
   }
   items: MusicElement[] = [];
-  constructor(private socket: SocketService, private videoService: VideoService){
+  constructor(private socket: SocketService, private toast: ToastrService){
     this.socket.getMusicList();
     this.socket.cargarActual();
   }
   ngOnInit(){
     this.socket.refreshMusicList().subscribe(data => {
-      console.log('evento escuchado -- ')
       this.items = JSON.parse(data);
     });
     this.socket.initVideo().subscribe(data => {
@@ -46,12 +44,17 @@ export class PanelComponent {
         this.estadoVideoActual.ruta = video.ruta;
         this.estadoVideoActual.volumen = 50;
       }else{ // respuesta cadena vacia
-        alert()
+        this.toast.warning('No hay videos en la cola', 'Cola Vacia')
       }
-    })
+    });
+    // this.socket.videoPlay().subscribe(data => {
+    //   console.log('Sync play button', data)
+    //   this.estadoVideoActual.play = data == 'play' ? true : false;
+    // })
   }
 
   drop(event: CdkDragDrop<string[]>) {
+    this.toast.success('HELLO', 'WORLD')
     moveItemInArray(this.items, event.previousIndex, event.currentIndex);
     console.log(this.items)
     this.socket.newOrder(JSON.stringify(this.items));
@@ -78,8 +81,9 @@ export class PanelComponent {
   nextVideo(){
     this.socket.emitNextVideo();
   }
-  volumen(){
-    const value:number = 19;
-    this.videoService.volumen(value);
+
+  ocularBarra(){
+    this.socket.emitOcultarBarra();
   }
+
 }

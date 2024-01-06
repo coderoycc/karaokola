@@ -1,6 +1,4 @@
-import { Component, HostListener, ElementRef } from '@angular/core';
-import { MusicElement } from 'src/app/interfaces/interface.musica';
-import { VideoState } from 'src/app/interfaces/interface.videostate';
+import { Component, HostListener, ElementRef, Input, ViewChild } from '@angular/core';
 import { SocketService } from 'src/app/services/socket.service';
 
 @Component({
@@ -12,79 +10,72 @@ export class VideoComponent  {
   @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent) {
     if(event.altKey && event.key === 'p'){
-      this.playVideo();
+      
     }
   }
-  vhcontainer:number = 88; 
+  @Input() videoUrl: string = '';
+  @Input() play: boolean = false;
+  @ViewChild('myVideo') listener?: ElementRef;
   myVideo: HTMLVideoElement;
-  estadoVideoActual: VideoState = {
-    play: false,
-    usuario: '',
-    descripcion:'',
-    ruta: '',
-    volumen: 50
-  }
-  colaVideos: MusicElement[] = []
-  constructor(private elementRef: ElementRef, private socket: SocketService) {
-    this.myVideo = this.elementRef.nativeElement.querySelector('#myVideo');
-    this.socket.getMusicList();
+  constructor(private elementRef: ElementRef ,private socket: SocketService) {
+    this.myVideo = this.elementRef.nativeElement.querySelector('video');
   }
 
   ngOnInit() {
-    alert('Necesario para iniciar');
-    // poner pantalla completa
-    // document.body.requestFullscreen();
-    this.myVideo = this.elementRef.nativeElement.querySelector('#myVideo');
-    this.socket.refreshMusicList().subscribe(data => {
-      console.log('Videos LIST')
-      this.colaVideos = JSON.parse(data);
+    this.myVideo = this.elementRef.nativeElement.querySelector('video');
+    this.socket.videoPlay().subscribe((data) => {
+      console.log('EVENTO PLAY PAUSE RECIBIDO')
+      this.play = data == 'play' ? true : false;
+      this.playPause();
     });
-    this.socket.playCurrentVideo().subscribe(data => {
-      console.log('VIDEO PLAY RECIBIDO', data)
-      if(data.length > 0){
-        const video = JSON.parse(data);
-        this.estadoVideoActual.ruta = video.ruta;
-        this.estadoVideoActual.descripcion = video.descripcion;
-        setTimeout(() => {
-          this.myVideo = this.elementRef.nativeElement.querySelector('#myVideo');
-          console.log(this.myVideo)
-          this.playVideo();
-        }, 900);
-      }
-    });
-    this.socket.reloadVideo().subscribe(data => {
-      console.log('VIDEO DESDE 0')
+    this.socket.reloadVideo().subscribe((data) => {
+      console.log('[SOCKET] RELOAD VIDEO');
       this.reloadVideo();
-    });
-    this.socket.nextVideo().subscribe(data => {
-
     })
   }
 
-  playVideo(){  
-    console.log('VIDEO PLAY RECBIDO')
-    console.log(this.myVideo)
-    if(this.estadoVideoActual.play){
-      this.myVideo.pause();
-      this.estadoVideoActual.play = false;
-    }else{
-      this.myVideo.play();
-      this.estadoVideoActual.play = true;
+  // Suscriptores para los eventos del video
+  playSubscription: any;
+  pauseSubscription: any;
+  endedSubscription: any;
+
+  ngAfterViewInit() {
+    if(this.listener){
+      // Configura los eventos del video
+      this.playSubscription = this.listener.nativeElement.addEventListener('play', () => {
+        this.socket.emitVideoPlay('play');
+      });
+      this.pauseSubscription = this.listener.nativeElement.addEventListener('pause', () => {
+        this.socket.emitVideoPlay('pause');
+      });
+      this.endedSubscription = this.listener.nativeElement.addEventListener('ended', () => {
+        this.socket.emitNextVideo();
+      });
     }
+  }
+
+  playPause(){
+    if(this.play)
+      this.myVideo.play();
+    else
+      this.myVideo.pause();
   }
   reloadVideo(){
     console.log('VIDEO RELOAD RECBIDO')
     this.myVideo.currentTime = 0;
   }
-  nextVideo(){
-    console.log('VIDEO NEXT RECBIDO')
-  }
-  volumen(value:number){
-    console.log('VIDEO VOLUME RECBIDO')
+
+  ngOnDestroy() {
+    console.log('ELIMINANDO VIDEO')
+    if(this.listener){
+      this.listener.nativeElement.removeEventListener('play', this.playSubscription);
+      this.listener.nativeElement.removeEventListener('pause', this.pauseSubscription);
+      this.listener.nativeElement.removeEventListener('ended', this.endedSubscription);
+    }
   }
   
-  // cambiar altura contenedor
-  cambiarAltura(){
-    this.vhcontainer = this.vhcontainer + 1;
+  
+  nextVideo(){
+    console.log('VIDEO NEXT RECBIDO')
   }
 }

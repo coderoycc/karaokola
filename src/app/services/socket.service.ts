@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class SocketService {
   
-  private socket = io.io('http://192.168.110.29:3000');
+  private socket = io.io('http://192.168.110.33:3000');
   constructor() { }
 
   getMusicList(){
@@ -19,6 +19,13 @@ export class SocketService {
     this.socket.emit('cargarActual','');
   }
 
+  emitVideoPlay(value: string){ // play | pause
+    this.socket.emit('videoPlay',value);
+  }
+
+  emitOcultarBarra(){
+    this.socket.emit('ocultarBarra','');
+  }
   playVideo(){
     this.socket.emit('playVideo','');
   }
@@ -79,18 +86,40 @@ export class SocketService {
     });
     return observable;
   }
-  reloadVideo(){
+  
+  ocultarBarra(){
     let observable = new Observable<string>(observer => {
-      this.socket.on('reloadVideo', (data) => {
+      this.socket.on('ocultarBarra', (data) => {
+        observer.next(data);
+      });
+      return () => { this.socket.disconnect(); };
+    })
+    return observable;
+  }
+
+  nextVideo(){
+    let observable = new Observable<string>(observer => {
+      this.socket.on('nextVideo', (data) => {
         observer.next(data);
       });
       return () => { this.socket.disconnect(); };  
     });
     return observable;
   }
-  nextVideo(){
+
+  // Eventos que solo recibe el componente VIDEO
+  videoPlay(){
+    let observable = new Observable<string>(observer => { // return string play : pause
+      this.socket.on('videoPlay', (data) => {
+        observer.next(data);
+      });
+      return () => { this.socket.disconnect(); };  
+    })
+    return observable;
+  }
+  reloadVideo(){
     let observable = new Observable<string>(observer => {
-      this.socket.on('nextVideo', (data) => {
+      this.socket.on('reloadVideo', (data) => {
         observer.next(data);
       });
       return () => { this.socket.disconnect(); };  
