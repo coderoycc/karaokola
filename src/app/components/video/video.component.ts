@@ -7,18 +7,20 @@ import { SocketService } from 'src/app/services/socket.service';
   styleUrls: ['./video.component.css'],
 })
 export class VideoComponent  {
-  @HostListener('window:keydown', ['$event'])
-  keyEvent(event: KeyboardEvent) {
-    if(event.altKey && event.key === 'p'){
+  // @HostListener('window:keydown', ['$event'])
+  // keyEvent(event: KeyboardEvent) {
+  //   if(event.altKey && event.key === 'p'){
       
-    }
-  }
+  //   }
+  // }
   @Input() videoUrl: string = '';
   @Input() play: boolean = false;
   @ViewChild('myVideo') listener?: ElementRef;
+  firstPlay: boolean;
   myVideo: HTMLVideoElement;
   constructor(private elementRef: ElementRef ,private socket: SocketService) {
     this.myVideo = this.elementRef.nativeElement.querySelector('video');
+    this.firstPlay = true;
   }
 
   ngOnInit() {
@@ -31,6 +33,14 @@ export class VideoComponent  {
     this.socket.reloadVideo().subscribe((data) => {
       console.log('[SOCKET] RELOAD VIDEO');
       this.reloadVideo();
+    });
+
+    this.socket.videoVolume().subscribe((data) => {
+      console.log('[SOCKET] Volumen video')
+      if(this.myVideo){
+        const vol = Number(data)/100;
+        this.myVideo.volume = vol;
+      }
     })
   }
 
@@ -44,6 +54,10 @@ export class VideoComponent  {
       // Configura los eventos del video
       this.playSubscription = this.listener.nativeElement.addEventListener('play', () => {
         this.socket.emitVideoPlay('play');
+        if(this.firstPlay && this.myVideo){
+          this.myVideo.volume = 0.8;
+          this.firstPlay = false;
+        }
       });
       this.pauseSubscription = this.listener.nativeElement.addEventListener('pause', () => {
         this.socket.emitVideoPlay('pause');
@@ -73,7 +87,6 @@ export class VideoComponent  {
       this.listener.nativeElement.removeEventListener('ended', this.endedSubscription);
     }
   }
-  
   
   nextVideo(){
     console.log('VIDEO NEXT RECBIDO')

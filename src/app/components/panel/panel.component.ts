@@ -86,4 +86,9 @@ export class PanelComponent {
     this.socket.emitOcultarBarra();
   }
 
+  volumeChange(){
+    console.log('Nuevo volumen.', this.estadoVideoActual.volumen);
+    this.socket.emitVideoVolume(this.estadoVideoActual.volumen);
+  }
+
 }

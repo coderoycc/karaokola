@@ -14,6 +14,9 @@ import { VideoComponent } from './components/video/video.component';
 import { LayoutComponent } from './components/layout/layout.component';
 import { ImageComponent } from './components/image/image.component';
 import { ToastrModule } from 'ngx-toastr';
+import { MatSliderModule } from '@angular/material/slider';
+import { FormsModule } from '@angular/forms';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -26,6 +29,8 @@ import { ToastrModule } from 'ngx-toastr';
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
+    MatSliderModule,
+    FormsModule,
     CdkDropList,
     CdkDrag,
     CdkDragPlaceholder,
@@ -33,7 +38,7 @@ import { ToastrModule } from 'ngx-toastr';
       closeButton: true,
       timeOut: 3100,
       progressBar: true
-    })
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent]

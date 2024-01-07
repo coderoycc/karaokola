@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class SocketService {
   
-  private socket = io.io('http://192.168.110.33:3000');
+  private socket = io.io('http://localhost:3000');
   constructor() { }
 
   getMusicList(){
@@ -22,7 +22,9 @@ export class SocketService {
   emitVideoPlay(value: string){ // play | pause
     this.socket.emit('videoPlay',value);
   }
-
+  emitVideoVolume(value: number){
+    this.socket.emit('videoVolume',value);
+  }
   emitOcultarBarra(){
     this.socket.emit('ocultarBarra','');
   }
@@ -124,6 +126,15 @@ export class SocketService {
       });
       return () => { this.socket.disconnect(); };  
     });
+    return observable;
+  }
+  videoVolume(){
+    let observable = new Observable<string>(observer => {
+      this.socket.on('videoVolume', (data) => {
+        observer.next(data)
+      });
+      return () => { this.socket.disconnect(); }
+    })
     return observable;
   }
 }
