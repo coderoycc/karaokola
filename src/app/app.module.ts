@@ -37,7 +37,8 @@ import { FormsModule } from '@angular/forms';
     ToastrModule.forRoot({
       closeButton: true,
       timeOut: 3100,
-      progressBar: true
+      progressBar: true,
+      maxOpened: 2
     }),
   ],
   providers: [],

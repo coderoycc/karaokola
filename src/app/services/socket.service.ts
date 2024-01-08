@@ -34,8 +34,8 @@ export class SocketService {
   pauseVideo(){
     this.socket.emit('pauseVideo','');
   }
-  emitReloadVideo(){
-    this.socket.emit('reloadVideo','');
+  emitReloadVideo(msg: string){
+    this.socket.emit('reloadVideo',msg);
   }
 
   emitNextVideo(){

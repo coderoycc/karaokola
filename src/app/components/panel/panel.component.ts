@@ -12,10 +12,10 @@ import { ToastrService } from 'ngx-toastr';
 export class PanelComponent {
   estadoVideoActual: VideoState = {
     play: false,
-    usuario: '()',
+    usuario: '',
     descripcion:'Sin Video Actual',
     ruta: '',
-    volumen: 50
+    volumen: 80
   }
   items: MusicElement[] = [];
   constructor(private socket: SocketService, private toast: ToastrService){
@@ -42,9 +42,9 @@ export class PanelComponent {
         this.estadoVideoActual.play = video.play;
         this.estadoVideoActual.descripcion = video.descripcion;
         this.estadoVideoActual.ruta = video.ruta;
-        this.estadoVideoActual.volumen = 50;
+        this.estadoVideoActual.volumen = 80;
       }else{ // respuesta cadena vacia
-        this.toast.warning('No hay videos en la cola', 'Cola Vacia')
+        this.toast.info('No hay videos en la cola', 'Cola Vacia')
       }
     });
     // this.socket.videoPlay().subscribe(data => {
@@ -54,7 +54,6 @@ export class PanelComponent {
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    this.toast.success('HELLO', 'WORLD')
     moveItemInArray(this.items, event.previousIndex, event.currentIndex);
     console.log(this.items)
     this.socket.newOrder(JSON.stringify(this.items));
@@ -73,13 +72,19 @@ export class PanelComponent {
     this.estadoVideoActual.play = !this.estadoVideoActual.play
     console.log('despues', this.estadoVideoActual.play);
   }
-
   reloadVideo(){
-    console.log('ReloadVIDEO')
-    this.socket.emitReloadVideo();
+    // if(!this.estadoVideoActual.play || this.items.length > 0){
+    //   this.socket.emitReloadVideo('anterior');
+    // }else{
+    this.socket.emitReloadVideo('');
+    // }
   }
   nextVideo(){
-    this.socket.emitNextVideo();
+    if(this.items.length > 0){
+      this.socket.emitNextVideo();
+    }else{
+      this.toast.warning('No hay canciones en cola')
+    }
   }
 
   ocularBarra(){
