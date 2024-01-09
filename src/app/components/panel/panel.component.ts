@@ -42,6 +42,7 @@ export class PanelComponent {
         this.estadoVideoActual.play = video.play;
         this.estadoVideoActual.descripcion = video.descripcion;
         this.estadoVideoActual.ruta = video.ruta;
+        this.estadoVideoActual.usuario = video.usuario;
         this.estadoVideoActual.volumen = 80;
       }else{ // respuesta cadena vacia
         this.toast.info('No hay videos en la cola', 'Cola Vacia')

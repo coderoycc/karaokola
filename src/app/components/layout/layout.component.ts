@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 import { MusicElement } from 'src/app/interfaces/interface.musica';
 import { VideoState } from 'src/app/interfaces/interface.videostate';
 import { SocketService } from 'src/app/services/socket.service';
-
+/**
+ * Layout que contiene a image o video.
+ */
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.component.html',
@@ -18,14 +21,20 @@ export class LayoutComponent {
     usuario: '',
     descripcion:'',
     ruta: '',
-    volumen: 50
+    volumen: 80
   }
-  constructor(private socket: SocketService) {
+  constructor(private socket: SocketService, private toast: ToastrService) {
     this.socket.getMusicList();
     this.socket.currentVideo();
   }
   ngOnInit(){
-    alert('Necesario para iniciar')
+    this.toast.show('Tap para continuar', '¡BIENVENIDO A KARAOKOLA!', {
+      timeOut:0,
+      tapToDismiss:true,
+      positionClass: 'toast-top-center',
+      disableTimeOut: true,
+      closeButton:false
+    })
     this.socket.refreshMusicList().subscribe(data => {
       console.log('Videos LIST')
       this.colaVideos = JSON.parse(data);

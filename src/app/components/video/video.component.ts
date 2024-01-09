@@ -53,14 +53,14 @@ export class VideoComponent  {
     if(this.listener){
       // Configura los eventos del video
       this.playSubscription = this.listener.nativeElement.addEventListener('play', () => {
-        this.socket.emitVideoPlay('play');
-        if(this.firstPlay && this.myVideo){
-          this.myVideo.volume = 0.8;
-          this.firstPlay = false;
-        }
+        // this.socket.emitVideoPlay('play');
+        // if(this.firstPlay && this.myVideo){
+        //   this.myVideo.volume = 0.8;
+        //   this.firstPlay = false;
+        // }
       });
       this.pauseSubscription = this.listener.nativeElement.addEventListener('pause', () => {
-        this.socket.emitVideoPlay('pause');
+        // this.socket.emitVideoPlay('pause');
       });
       this.endedSubscription = this.listener.nativeElement.addEventListener('ended', () => {
         this.socket.emitNextVideo();

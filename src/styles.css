@@ -136,9 +136,22 @@ button.toast-close-button {
 }
 .toast-container.toast-top-center .ngx-toastr,
 .toast-container.toast-bottom-center .ngx-toastr {
-  width: 300px;
+  width: 350px;
   margin-left: auto;
   margin-right: auto;
+  margin-top: 50px;
+  background-color: cadetblue;
+}
+.toast-container.toast-top-center .toast-title{
+  font-size: 20px;
+  text-align: center;
+}
+.toast-container.toast-top-center > .ngx-toastr{
+  padding-left: 15px !important;
+}
+.toast-container.toast-top-center .toast-message{
+  font-size: 18px;
+  text-align: center;
 }
 .toast-container.toast-top-full-width .ngx-toastr,
 .toast-container.toast-bottom-full-width .ngx-toastr {
