@@ -51,6 +51,7 @@ export class LayoutComponent {
           this.estadoVideoActual.descripcion = video.descripcion;
           this.estadoVideoActual.volumen = video.volumen;
           const eventoPlay = this.estadoVideoActual.play ? 'play' : 'pause';
+          console.log('Se esta emitiendo el evento', eventoPlay)
           this.socket.emitVideoPlay(eventoPlay);
         }else{
           this.mostrarVideo = false;

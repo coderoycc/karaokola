@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class SocketService {
   
-  private socket = io.io('http://localhost:3000');
+  private socket = io.io('http://192.168.110.249:3000');
   constructor() { }
 
   getMusicList(){
